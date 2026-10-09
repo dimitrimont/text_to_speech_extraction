@@ -66,3 +66,4 @@ describe('DOM Text Injection Tests', () => {
         expect(document.execCommand).toHaveBeenCalledWith('insertText', false, 'Dictated text');
     });
 });
+

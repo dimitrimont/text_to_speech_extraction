@@ -18,6 +18,11 @@
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "prettier": "^3.9.9",
-    "puppeteer": "^25.13.0"
+    "puppeteer": "^25.13.0",
+    "webpack": "^5.111.1",
+    "webpack-cli": "^7.2.3"
+  },
+  "dependencies": {
+    "@xenova/transformers": "^2.17.2"
   }
 }

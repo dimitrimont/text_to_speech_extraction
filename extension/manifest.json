@@ -5,7 +5,8 @@
   "description": "Dictate text into any text field on the web with real-time frequency visualization.",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -17,7 +18,8 @@
     {
       "matches": ["<all_urls>"],
       "css": ["styles/content.css"],
-      "js": ["scripts/content.js"]
+      "js": ["scripts/content.js"],
+      "all_frames": true
     }
   ],
   "icons": {
