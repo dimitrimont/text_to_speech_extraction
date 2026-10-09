@@ -74,7 +74,9 @@ Both versions support basic voice commands to help format your text without touc
 
 
 
-https://github.com/user-attachments/assets/c370e0b5-53de-47df-8f89-c966af07158b
+
+https://github.com/user-attachments/assets/10b5884f-7717-4c56-b717-605843e5112e
+
 
 
 
