@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AnyField</title>
+    <style>
+        body {
+            width: 300px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            background: #18181b; /* zinc-900 */
+            color: #f4f4f5; /* zinc-100 */
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .header-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+        }
+        .header-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        h2 { 
+            margin: 0; 
+            font-size: 20px; 
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        p { 
+            font-size: 14px; 
+            color: #a1a1aa; /* zinc-400 */
+            margin: 0 0 28px 0;
+            line-height: 1.5;
+        }
+        
+        .toggle-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #27272a; /* zinc-800 */
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .toggle-container:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e4e4e7; /* zinc-200 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toggle-label svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+        }
+        
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #3f3f46; /* zinc-700 */
+            transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 24px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider {
+            background-color: #6366f1; /* indigo-500 */
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" x2="12" y1="19" y2="22"></line>
+            </svg>
+        </div>
+        <h2>AnyField ML</h2>
+    </div>
+    <p>Dictate seamlessly into any text field on the web using on-device ML.</p>
+    
+    <div class="toggle-group">
+        <div class="toggle-container" id="status-container">
+            <span class="toggle-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span id="status-text">Active</span>
+            </span>
+            <label class="switch">
+                <input type="checkbox" id="master-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="toggle-container" id="theme-container">
+            <span class="toggle-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                <span id="theme-text">Dark Theme</span>
+            </span>
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <script src="dist/popup.bundle.js"></script>
+</body>
+</html>

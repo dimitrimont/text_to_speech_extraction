@@ -3,7 +3,7 @@
  */
 const path = require('path');
 
-const CONTENT_SCRIPT_PATH = path.resolve(__dirname, '../extension/scripts/content.js');
+const CONTENT_SCRIPT_PATH = path.resolve(__dirname, '../extension-webspeech-api/scripts/content.js');
 
 describe('Extension E2E Test', () => {
     let browser;
@@ -46,6 +46,13 @@ describe('Extension E2E Test', () => {
         // Inject our extension's content script directly into the page
         // This bypasses the strict extension-loading sandbox while still testing our logic!
         await page.addScriptTag({ path: CONTENT_SCRIPT_PATH });
+        
+        // Mock chrome extension initialization
+        await page.evaluate(() => {
+            if (typeof window.injectFloatingUI === 'function') {
+                window.injectFloatingUI();
+            }
+        });
 
         // Trigger focus
         await page.evaluate(() => {

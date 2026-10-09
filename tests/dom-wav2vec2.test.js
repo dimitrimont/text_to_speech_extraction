@@ -1,4 +1,4 @@
-const { insertTextAtCursor } = require('../extension/scripts/content.js');
+const { insertTextAtCursor } = require('../extension-wav2vec2-local/src/content.js');
 
 describe('DOM Text Injection Tests', () => {
     beforeEach(() => {
