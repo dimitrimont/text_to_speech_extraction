@@ -5,8 +5,7 @@
   "description": "Dictate text into any text field on the web with real-time frequency visualization.",
   "permissions": [
     "activeTab",
-    "scripting",
-    "audioCapture"
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
