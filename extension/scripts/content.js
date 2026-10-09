@@ -278,6 +278,27 @@ if (typeof document !== 'undefined') {
             }
         }, 200);
     });
+
+    // Listen for the "Force Start" command from the extension popup
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            if (request.action === "forceToggleDictation") {
+                if (!floatingUI) injectFloatingUI();
+                
+                // If there's no active field detected yet, anchor it to the top right of the screen
+                floatingUI.style.display = 'flex';
+                if (!floatingUI.style.top || floatingUI.style.top === '') {
+                    floatingUI.style.position = 'fixed';
+                    floatingUI.style.top = '20px';
+                    floatingUI.style.right = '20px';
+                    floatingUI.style.left = 'auto';
+                }
+                
+                toggleDictation();
+                sendResponse({status: "started"});
+            }
+        });
+    }
 }
 
 // Export for Jest testing
