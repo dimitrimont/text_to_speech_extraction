@@ -4,3 +4,4 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // We can handle context menus or global hotkeys here in the future
+

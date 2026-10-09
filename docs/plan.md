@@ -50,3 +50,4 @@ The goal of this project is to build a browser extension that allows users to di
     *   Test on standard HTML forms (e.g., Wikipedia search).
     *   Test on complex web apps (e.g., Google Docs, Twitter/X tweet box, Gmail composer).
 3.  **Visualizer QA:** Ensure the frequency bars react in real-time and stop when dictation pauses.
+

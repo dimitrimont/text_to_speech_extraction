@@ -187,20 +187,31 @@ function stopVisualization() {
 }
 
 // Event Listeners
-document.addEventListener('focusin', (e) => {
-    const el = e.target;
-    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) {
-        if (el.type !== 'password' && el.type !== 'hidden') {
-            activeField = el;
-            showUI(el);
+if (typeof document !== 'undefined') {
+    document.addEventListener('focusin', (e) => {
+        const el = e.target;
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) {
+            if (el.type !== 'password' && el.type !== 'hidden') {
+                activeField = el;
+                showUI(el);
+            }
         }
-    }
-});
+    });
 
-document.addEventListener('focusout', (e) => {
-    setTimeout(() => {
-        if (!isRecording && document.activeElement !== activeField) {
-            hideUI();
-        }
-    }, 200);
-});
+    document.addEventListener('focusout', (e) => {
+        setTimeout(() => {
+            if (!isRecording && document.activeElement !== activeField) {
+                hideUI();
+            }
+        }, 200);
+    });
+}
+
+// Export for Jest testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        insertTextAtCursor,
+        initSpeechRecognition,
+        injectFloatingUI
+    };
+}
