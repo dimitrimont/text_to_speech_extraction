@@ -1,7 +1,6 @@
 /**
  * @jest-environment node
  */
-const puppeteer = require('puppeteer');
 const path = require('path');
 
 const EXTENSION_PATH = path.resolve(__dirname, '../extension');
@@ -9,8 +8,12 @@ const EXTENSION_PATH = path.resolve(__dirname, '../extension');
 describe('Extension E2E Test', () => {
     let browser;
     let page;
+    let puppeteer;
 
     beforeAll(async () => {
+        // Use dynamic import to support modern Puppeteer ESM
+        puppeteer = (await import('puppeteer')).default;
+        
         // Launch Chrome with the extension loaded
         browser = await puppeteer.launch({
             headless: 'new',
