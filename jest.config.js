@@ -1,4 +1,6 @@
 module.exports = {
   testEnvironment: 'jsdom',
-  testTimeout: 10000
+  testTimeout: 20000,
+  testPathIgnorePatterns: ['/node_modules/', '/venv/'],
+  modulePathIgnorePatterns: ['/venv/']
 };

@@ -16,7 +16,7 @@ describe('Extension E2E Test', () => {
         
         // Launch Chrome with the extension loaded
         browser = await puppeteer.launch({
-            headless: 'new',
+            headless: false,
             args: [
                 `--disable-extensions-except=${EXTENSION_PATH}`,
                 `--load-extension=${EXTENSION_PATH}`,
