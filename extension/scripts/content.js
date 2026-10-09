@@ -16,6 +16,17 @@ let micBtn = null;
 let visualizerCanvas = null;
 let canvasCtx = null;
 
+// Mouse tracking for Canvas-based editors (Google Docs) that hide inputs off-screen
+let lastMouseX = 0;
+let lastMouseY = 0;
+
+if (typeof document !== 'undefined') {
+    document.addEventListener('mousedown', (e) => {
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+}
+
 // Initialize Speech Recognition
 function initSpeechRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -48,11 +59,9 @@ function initSpeechRecognition() {
                 insertTextAtCursor(activeField, '\n');
             } 
             else if (lowerText === "clear field" || lowerText === "clear text") {
-                // Wipe the field completely
                 insertTextAtCursor(activeField, '', true); 
             }
             else {
-                // Standard Dictation (Capitalize first letter)
                 processedText = processedText.charAt(0).toUpperCase() + processedText.slice(1);
                 insertTextAtCursor(activeField, processedText + ' ');
             }
@@ -61,7 +70,7 @@ function initSpeechRecognition() {
     
     rec.onend = () => {
         if (isRecording) {
-            rec.start(); // auto-restart if still supposed to be recording
+            rec.start();
         } else {
             stopVisualization();
         }
@@ -70,17 +79,33 @@ function initSpeechRecognition() {
     return rec;
 }
 
-// Safely insert text to handle React/Vue/Angular controlled inputs
+// Safely insert text into ANY architecture (React, Standard, or Google Docs Canvas)
 function insertTextAtCursor(element, text, wipe = false) {
+    if (wipe) text = "";
+
+    // 1. Google Docs / Canvas Editors (They use hidden iframes for typing)
+    if (element.tagName === 'IFRAME' || element.classList?.contains('docs-texteventtarget-iframe')) {
+        if (wipe) {
+            // Simulate backspaces for Google Docs if clear command is used
+            for(let i=0; i<50; i++) {
+                element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', keyCode: 8, bubbles: true }));
+            }
+            return;
+        }
+        // Google Docs listens to synthetic TextEvents sent directly to the hidden iframe
+        const textEvent = document.createEvent('TextEvent');
+        textEvent.initTextEvent('textInput', true, true, window, text, 9, "en-US");
+        element.dispatchEvent(textEvent);
+        return;
+    }
+
+    // 2. React / Vue / Standard Inputs
     if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
         const start = element.selectionStart;
         const end = element.selectionEnd;
         const currentValue = element.value;
-        
         const newText = wipe ? '' : (currentValue.slice(0, start) + text + currentValue.slice(end));
         
-        // Pro-level injection: Bypass React/Vue synthetic event wrappers
-        // Frameworks override the element.value setter. We must access the native prototype setter.
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
         const nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
         
@@ -89,16 +114,15 @@ function insertTextAtCursor(element, text, wipe = false) {
         } else if (element.tagName === 'TEXTAREA' && nativeTextAreaValueSetter) {
             nativeTextAreaValueSetter.call(element, newText);
         } else {
-            // Fallback for non-standard or older browsers
             element.value = newText;
         }
         
-        // Dispatch events so Single Page Applications (SPAs) notice the change
         element.dispatchEvent(new Event('input', { bubbles: true }));
         element.dispatchEvent(new Event('change', { bubbles: true }));
-        
         element.selectionStart = element.selectionEnd = start + text.length;
-    } else if (element.isContentEditable) {
+    } 
+    // 3. Standard ContentEditable (Notion, Medium, etc)
+    else if (element.isContentEditable) {
         element.focus();
         if (wipe) {
             element.innerHTML = '';
@@ -130,17 +154,29 @@ function injectFloatingUI() {
     floatingUI.appendChild(visualizerCanvas);
     document.body.appendChild(floatingUI);
     
-    micBtn.addEventListener('click', toggleDictation);
+    // Use mousedown instead of click to prevent focus loss issues on some SPAs
+    micBtn.addEventListener('mousedown', (e) => {
+        e.preventDefault(); 
+        toggleDictation();
+    });
 }
 
-// Show UI near active field
+// Show UI near active field or mouse cursor
 function showUI(field) {
     if (!floatingUI) injectFloatingUI();
     const rect = field.getBoundingClientRect();
     
     floatingUI.style.display = 'flex';
-    floatingUI.style.top = `${window.scrollY + rect.top - 40}px`;
-    floatingUI.style.left = `${window.scrollX + rect.left + rect.width - 150}px`;
+    
+    // If field is hidden/offscreen (like Google Docs), position UI at the mouse click
+    if (rect.width === 0 || rect.height === 0 || rect.top < -500 || rect.left < -500) {
+        floatingUI.style.top = `${window.scrollY + lastMouseY - 40}px`;
+        floatingUI.style.left = `${window.scrollX + lastMouseX + 20}px`;
+    } else {
+        // Standard positioning
+        floatingUI.style.top = `${window.scrollY + rect.top - 40}px`;
+        floatingUI.style.left = `${window.scrollX + rect.left + rect.width - 150}px`;
+    }
 }
 
 // Hide UI
@@ -225,7 +261,8 @@ function stopVisualization() {
 if (typeof document !== 'undefined') {
     document.addEventListener('focusin', (e) => {
         const el = e.target;
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) {
+        // Support Google Docs IFRAME alongside normal inputs
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable || el.tagName === 'IFRAME') {
             if (el.type !== 'password' && el.type !== 'hidden') {
                 activeField = el;
                 showUI(el);
@@ -235,7 +272,8 @@ if (typeof document !== 'undefined') {
 
     document.addEventListener('focusout', (e) => {
         setTimeout(() => {
-            if (!isRecording && document.activeElement !== activeField) {
+            // Keep UI open if we click inside the UI itself
+            if (!isRecording && document.activeElement !== activeField && !floatingUI?.contains(document.activeElement)) {
                 hideUI();
             }
         }, 200);
