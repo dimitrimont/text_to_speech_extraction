@@ -61,14 +61,29 @@ function insertTextAtCursor(element, text) {
         const start = element.selectionStart;
         const end = element.selectionEnd;
         const currentValue = element.value;
-        element.value = currentValue.slice(0, start) + text + currentValue.slice(end);
+        const newText = currentValue.slice(0, start) + text + currentValue.slice(end);
         
-        // Dispatch events so SPAs notice the change
+        // Pro-level injection: Bypass React/Vue synthetic event wrappers
+        // Frameworks override the element.value setter. We must access the native prototype setter.
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        const nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+        
+        if (element.tagName === 'INPUT' && nativeInputValueSetter) {
+            nativeInputValueSetter.call(element, newText);
+        } else if (element.tagName === 'TEXTAREA' && nativeTextAreaValueSetter) {
+            nativeTextAreaValueSetter.call(element, newText);
+        } else {
+            // Fallback for non-standard or older browsers
+            element.value = newText;
+        }
+        
+        // Dispatch events so Single Page Applications (SPAs) notice the change
         element.dispatchEvent(new Event('input', { bubbles: true }));
         element.dispatchEvent(new Event('change', { bubbles: true }));
         
         element.selectionStart = element.selectionEnd = start + text.length;
     } else if (element.isContentEditable) {
+        element.focus();
         document.execCommand('insertText', false, text);
     }
 }
