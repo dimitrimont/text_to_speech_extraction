@@ -40,7 +40,22 @@ function initSpeechRecognition() {
         }
         
         if (finalTranscript && activeField) {
-            insertTextAtCursor(activeField, finalTranscript + ' ');
+            let processedText = finalTranscript.trim();
+            const lowerText = processedText.toLowerCase();
+            
+            // --- VOICE COMMANDS ENGINE ---
+            if (lowerText === "new line" || lowerText === "next line") {
+                insertTextAtCursor(activeField, '\n');
+            } 
+            else if (lowerText === "clear field" || lowerText === "clear text") {
+                // Wipe the field completely
+                insertTextAtCursor(activeField, '', true); 
+            }
+            else {
+                // Standard Dictation (Capitalize first letter)
+                processedText = processedText.charAt(0).toUpperCase() + processedText.slice(1);
+                insertTextAtCursor(activeField, processedText + ' ');
+            }
         }
     };
     
@@ -56,12 +71,13 @@ function initSpeechRecognition() {
 }
 
 // Safely insert text to handle React/Vue/Angular controlled inputs
-function insertTextAtCursor(element, text) {
+function insertTextAtCursor(element, text, wipe = false) {
     if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
         const start = element.selectionStart;
         const end = element.selectionEnd;
         const currentValue = element.value;
-        const newText = currentValue.slice(0, start) + text + currentValue.slice(end);
+        
+        const newText = wipe ? '' : (currentValue.slice(0, start) + text + currentValue.slice(end));
         
         // Pro-level injection: Bypass React/Vue synthetic event wrappers
         // Frameworks override the element.value setter. We must access the native prototype setter.
@@ -84,7 +100,11 @@ function insertTextAtCursor(element, text) {
         element.selectionStart = element.selectionEnd = start + text.length;
     } else if (element.isContentEditable) {
         element.focus();
-        document.execCommand('insertText', false, text);
+        if (wipe) {
+            element.innerHTML = '';
+        } else {
+            document.execCommand('insertText', false, text);
+        }
     }
 }
 
