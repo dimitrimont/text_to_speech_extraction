@@ -68,6 +68,23 @@ Both versions support basic voice commands to help format your text without touc
 
 ---
 
+## Demo
+
+<img width="1512" height="423" alt="Screenshot 2026-10-09 at 6 17 14 PM" src="https://github.com/user-attachments/assets/69687b6e-9891-4f36-8937-14f4aff9d827" />
+
+
+
+https://github.com/user-attachments/assets/c370e0b5-53de-47df-8f89-c966af07158b
+
+
+
+https://github.com/user-attachments/assets/a115d603-ffd8-45c3-883e-6b03a65c330f
+
+
+
+
+---
+
 ## Development Setup
 
 To work on this project locally, make sure you have [Node.js](https://nodejs.org/) installed.
