@@ -1,0 +1,22 @@
+{
+  "name": "text_to_speech_extention",
+  "version": "1.0.0",
+  "description": "Welcome to the AnyField Dictation extension! This project allows you to use your voice to type into **any text field** on the internet. It uses the native Web Speech API for high-performance dictation and features a real-time audio frequency visualizer.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^10.12.0",
+    "jest": "^30.5.2",
+    "prettier": "^3.9.9",
+    "puppeteer": "^25.13.0"
+  }
+}
